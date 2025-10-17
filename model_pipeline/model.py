@@ -9,12 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-
-try:
-    from sklearn.metrics import roc_auc_score
-    HAVE_SKLEARN = True
-except Exception:
-    HAVE_SKLEARN = False
+from sklearn.metrics import roc_auc_score
 
 # ---------- Repro ----------
 def set_seed(seed=42):
@@ -307,15 +302,14 @@ def eval_epoch(model, dl, device="cpu"):
             all_trues.append(y.cpu())
     avg_loss = total / max(n, 1)
     aurocs = {}
-    if HAVE_SKLEARN and all_probs:
-        probs = torch.cat(all_probs, dim=0).numpy()
-        trues = torch.cat(all_trues, dim=0).numpy()
-        for i, name in enumerate(["white", "black"]):
-            # roc_auc_score requires both classes present
-            if len(set(trues[:, i].tolist())) >= 2:
-                aurocs[name] = roc_auc_score(trues[:, i], probs[:, i])
-            else:
-                aurocs[name] = None
+    probs = torch.cat(all_probs, dim=0).numpy()
+    trues = torch.cat(all_trues, dim=0).numpy()
+    for i, name in enumerate(["white", "black"]):
+        # roc_auc_score requires both classes present
+        if len(set(trues[:, i].tolist())) >= 2:
+            aurocs[name] = roc_auc_score(trues[:, i], probs[:, i])
+        else:
+            aurocs[name] = None
     return avg_loss, aurocs
 
 def train_example(
