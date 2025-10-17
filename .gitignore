@@ -1,1 +1,4 @@
 *.iml
+*.csv
+*.arrow
+*.json
