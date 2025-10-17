@@ -383,10 +383,9 @@ def train_example(
         val_loss, val_aucs = eval_epoch(model, val_dl, device=device)
 
         msg = f"Epoch {ep:02d} | train {train_loss:.4f} | val {val_loss:.4f}"
-        if HAVE_SKLEARN:
-            msg += " | AUROC " + ", ".join(
-                f"{k}={('%.3f' % v) if v is not None else 'n/a'}" for k, v in val_aucs.items()
-            )
+        msg += " | AUROC " + ", ".join(
+            f"{k}={('%.3f' % v) if v is not None else 'n/a'}" for k, v in val_aucs.items()
+        )
         print(msg)
 
         if val_loss < best_val:
