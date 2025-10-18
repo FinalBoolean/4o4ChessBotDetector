@@ -21,8 +21,8 @@ function loadPGN() {
   const reader = new FileReader();
   reader.onload = function(e) {
     try{
-
-        if (game.loadPgn(e.target.result,{ sloppy: true })) {
+        console.log(e.target.result);
+        if (game.load_pgn(e.target.result)) {
             moves = game.history();
             currentMoveIndex = 0;
             game.reset();
@@ -33,7 +33,6 @@ function loadPGN() {
             alert('Invalid PGN format');
         }
     }catch(error){
-        alert("Error handling PGN file " + error.message);
         console.log(error);
     }
   };
