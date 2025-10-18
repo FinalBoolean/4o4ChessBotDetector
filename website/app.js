@@ -61,7 +61,7 @@ function resetGame() {
   currentMoveIndex = 0;
 }
 
-// Attach event listeners (replaces onclick attributes)
+// Attach event listeners
 document.getElementById('loadBtn').addEventListener('click', loadPGN);
 document.getElementById('prevBtn').addEventListener('click', previousMove);
 document.getElementById('nextBtn').addEventListener('click', nextMove);
