@@ -1,0 +1,12 @@
+body {
+  background-color: #22333B;
+}
+#board1{
+    border-radius: 25px;
+    background-color: #5D737E;
+    padding: 20px;
+
+}
+#loadBtn{
+    background-color: rgb(253, 25, 93);
+}
