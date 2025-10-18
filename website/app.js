@@ -3,7 +3,7 @@ import { Chess } from 'chess.js'
 
 const board1 = Chessboard('board1', {
   position: 'start',
-  pieceTheme: 'node_modules/@chrisoakman/chessboardjs/dist/img/chesspieces/wikipedia/{piece}.png'
+  pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
 });
 
 let moves = [];
@@ -20,15 +20,20 @@ function loadPGN() {
   
   const reader = new FileReader();
   reader.onload = function(e) {
-    if (game.load_pgn(e.target.result)) {
-      moves = game.history();
-      currentMoveIndex = 0;
-      game.reset();
-      board.position('start');
-      console.log(moves);
-      alert('PGN loaded! Use Next/Previous buttons to navigate.');
-    } else {
-      alert('Invalid PGN format');
+    try{
+        console.log(e.target.result);
+        if (game.load_pgn(e.target.result)) {
+            moves = game.history();
+            currentMoveIndex = 0;
+            game.reset();
+            board1.position('start');
+            console.log(moves);
+            alert('PGN loaded! Use Next/Previous buttons to navigate.');
+        } else {
+            alert('Invalid PGN format');
+        }
+    }catch(error){
+        console.log(error);
     }
   };
   reader.readAsText(file);
@@ -37,7 +42,7 @@ function loadPGN() {
 function nextMove() {
   if (currentMoveIndex < moves.length) {
     game.move(moves[currentMoveIndex]);
-    board.position(game.fen());
+    board1.position(game.fen());
     currentMoveIndex++;
   }
 }
@@ -45,14 +50,14 @@ function nextMove() {
 function previousMove() {
   if (currentMoveIndex > 0) {
     game.undo();
-    board.position(game.fen());
+    board1.position(game.fen());
     currentMoveIndex--;
   }
 }
 
 function resetGame() {
   game.reset();
-  board.position('start');
+  board1.position('start');
   currentMoveIndex = 0;
 }
 
