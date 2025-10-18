@@ -1,5 +1,6 @@
 body {
   background-color: #22333B;
+  color: white;
 }
 #board1{
     border-radius: 25px;
@@ -7,6 +8,12 @@ body {
     padding: 20px;
 
 }
-#loadBtn{
-    background-color: rgb(253, 25, 93);
+button{
+    border-radius: 25px;
+    background-color: #C6AC8F;
+    color: white;
+}
+input[type="file"]::file-selector-button{
+  background-color: #C6AC8F; 
+  color: white;
 }
