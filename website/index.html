@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +8,32 @@
   <link rel="stylesheet" href="node_modules/@chrisoakman/chessboardjs/dist/chessboard-1.0.0.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <div id="board1" style="width: 600px; margin: 150px auto 20px auto;"></div>
- 
-  <div style="text-align: center;">
-    <input type="file" id="pgnFile" accept=".pgn">
-    <button id="loadBtn">Load PGN</button>
-    <button id="prevBtn">Previous</button>
-    <button id="pauseBtn" class="nav-button">Pause</button>
-    <button id="nextBtn">Next</button>
-    <button id="resetBtn">Reset</button>
-    <button id="newBTN">New Game</button>
+
+  <div class="controls">
+    <div class="left">
+      <input type="file" id="pgnFile" accept=".pgn">
+      <button id="loadBtn">Load PGN</button>
+    </div>
+
+    <div class="center">
+      <button id="prevBtn">Back</button>
+      <button id="pauseBtn">Pause</button>
+      <button id="nextBtn">Next</button>
+    </div>
+
+    <div class="right">
+      <button id="resetBtn">Reset</button>
+      <button id="newBTN">New Game</button>
+    </div>
   </div>
+
+
   <script src="node_modules/jquery/dist/jquery.min.js"></script>
   <script src="node_modules/@chrisoakman/chessboardjs/dist/chessboard-1.0.0.min.js"></script>
   <script type="module" src="app.js"></script>
 </body>
+
 </html>
