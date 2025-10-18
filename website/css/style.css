@@ -5,5 +5,8 @@ body {
     border-radius: 25px;
     background-color: #5D737E;
     padding: 20px;
-    
+
+}
+#loadBtn{
+    background-color: rgb(253, 25, 93);
 }
