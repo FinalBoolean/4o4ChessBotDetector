@@ -24,7 +24,7 @@ function loadPGN() {
       moves = game.history();
       currentMoveIndex = 0;
       game.reset();
-      board.position('start');
+      board1.position('start');
       console.log(moves);
       alert('PGN loaded! Use Next/Previous buttons to navigate.');
     } else {
@@ -37,7 +37,7 @@ function loadPGN() {
 function nextMove() {
   if (currentMoveIndex < moves.length) {
     game.move(moves[currentMoveIndex]);
-    board.position(game.fen());
+    board1.position(game.fen());
     currentMoveIndex++;
   }
 }
@@ -45,14 +45,14 @@ function nextMove() {
 function previousMove() {
   if (currentMoveIndex > 0) {
     game.undo();
-    board.position(game.fen());
+    board1.position(game.fen());
     currentMoveIndex--;
   }
 }
 
 function resetGame() {
   game.reset();
-  board.position('start');
+  board1.position('start');
   currentMoveIndex = 0;
 }
 
