@@ -11,34 +11,11 @@ input[type="file"]::file-selector-button{
   background-color: #C6AC8F; 
   color: white;
 }
-.controls {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  justify-items: center;
-  width: 80%;
-  margin: 20px auto;
-}
-
 /* Left and right groups */
-.left {
-  justify-self: start;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transform: translateX(+400px);
-}
-
 .center {
   display: flex;
   justify-content: center;
   gap: 10px;
-}
-
-.right {
-  display: flex;
-  gap: 10px;
-  transform: translateX(-180px);
 }
 /* Button styling */
 button {
