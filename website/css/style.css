@@ -26,6 +26,7 @@ input[type="file"]::file-selector-button{
   display: flex;
   align-items: center;
   gap: 10px;
+  transform: translateX(+400px);
 }
 
 .center {
@@ -35,11 +36,10 @@ input[type="file"]::file-selector-button{
 }
 
 .right {
-  justify-self: end;
   display: flex;
   gap: 10px;
+  transform: translateX(-180px);
 }
-
 /* Button styling */
 button {
   background-color: #1e1e2e;
@@ -74,4 +74,52 @@ button:active {
 #pauseBtn:hover {
   background-color: #ff6b81;
   border-color: #ff4757;
+}
+#pgnFile{
+    transform: translate(200px, -400px);
+}
+/* From Uiverse.io by csemszepp */ 
+.custum-file-upload {
+  height: 200px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  gap: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #e8e8e8;
+  background-color: #212121;
+  padding: 1.5rem;
+  border-radius: 10px;
+  position: absolute;
+  transform: translateY(-500px);
+  margin-left: 50px;
+}       
+
+.custum-file-upload .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custum-file-upload .icon svg {
+  height: 80px;
+  fill: #e8e8e8;
+}
+
+.custum-file-upload .text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custum-file-upload .text span {
+  font-weight: 400;
+  color: #e8e8e8;
+}
+
+.custum-file-upload input {
+  display: none;
 }
