@@ -31,12 +31,12 @@ import io
 import os
 import re
 from typing import List, Dict, Any, Tuple
-
+from flask_cors import CORS
 from flask import Flask, request, jsonify, abort
 import chess.pgn as pgn
 
 app = Flask(__name__)
-
+CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
 # ----------------------------
 # PGN helpers
 # ----------------------------

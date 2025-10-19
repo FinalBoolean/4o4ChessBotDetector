@@ -84,7 +84,8 @@ async function analyzeGame(pgn) {
         const response = await fetch('http://localhost:6767/infer', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({ pgn: pgn })
         });
