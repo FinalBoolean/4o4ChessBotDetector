@@ -1,6 +1,4 @@
 // Global state
-import { Chess } from 'chess.js'
-
 let demoBoard, analysisBoard;
 let demoGame, analysisGame;
 let demoInterval;
@@ -35,15 +33,16 @@ function initDemoBoard() {
 }
 
 async function fetchDemoGame() {
-<<<<<<< HEAD
     try {
         const response = await fetch('/api/demo-game');
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json(); // Expecting JSON
+        
+        const data = await response.json();
         const pgn = data.pgn;
+        
         demoGame.load_pgn(pgn);
         playDemoGame();
     } catch (error) {
@@ -54,17 +53,6 @@ async function fetchDemoGame() {
         demoGame.load_pgn(mockPGN);
         playDemoGame();
     }
-=======
-    // TODO: Replace with actual endpoint
-    // const response = await fetch('/api/demo-game');
-    // const pgn = await response.text();
-
-    // Mock PGN for demo
-    const mockPGN = '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O';
-
-    demoGame.load_pgn(mockPGN);
-    playDemoGame();
->>>>>>> 1fe61651a3adc582cd237d12d0ea90139ccfeb02
 }
 
 function playDemoGame() {
@@ -90,47 +78,38 @@ function playDemoGame() {
     }, 1000);
 }
 
-function generateMockAnalysis(pgn) {
-    const game = new Chess();
+async function analyzeGame(pgn) {
     try {
-        const loadResult = game.load_pgn(pgn);
-        if (!loadResult) {
-            return null;
+        const response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ pgn: pgn })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        // Transform backend format to frontend format
+        // data[0] = white, data[1] = black
+        return {
+            white: {
+                overallProbability: data[0].score / 100, // Convert to 0-1 range
+                moveProbs: data[0].moves.map(m => m.prob / 100)
+            },
+            black: {
+                overallProbability: data[1].score / 100,
+                moveProbs: data[1].moves.map(m => m.prob / 100)
+            }
+        };
     } catch (error) {
-        console.error('Error loading PGN:', error);
-        return null;
+        console.error('Error analyzing game:', error);
+        throw error; // Re-throw so caller can handle it
     }
-
-    const moves = game.history();
-
-    if (moves.length === 0) {
-        return null;
-    }
-
-    // Generate random probabilities for demo
-    const whiteMoves = [];
-    const blackMoves = [];
-
-    moves.forEach((move, i) => {
-        const prob = Math.random();
-        if (i % 2 === 0) {
-            whiteMoves.push(prob);
-        } else {
-            blackMoves.push(prob);
-        }
-    });
-
-    return {
-        white: {
-            overallProbability: whiteMoves.length > 0 ? whiteMoves.reduce((a, b) => a + b, 0) / whiteMoves.length : 0,
-            moveProbs: whiteMoves
-        },
-        black: {
-            overallProbability: blackMoves.length > 0 ? blackMoves.reduce((a, b) => a + b, 0) / blackMoves.length : 0,
-            moveProbs: blackMoves
-        }
-    };
 }
 
 function initAnalysisBoard() {
@@ -293,11 +272,10 @@ function drawArrow(from, to) {
 
     // Calculate arrow angle
     const angle = Math.atan2(y2 - y1, x2 - x1);
-    const arrowLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 
     // Shorten arrow to not cover destination square
-    const arrowHeadSize = 10;  // The markerWidth value
-    const shortenBy = squareSize * 0.5 + (arrowHeadSize/2);  // Adjust this value as needed
+    const arrowHeadSize = 10;
+    const shortenBy = squareSize * 0.5 + (arrowHeadSize/2);
     const x2Short = x2 - (shortenBy + arrowHeadSize) * Math.cos(angle);
     const y2Short = y2 - (shortenBy + arrowHeadSize) * Math.sin(angle);
 
@@ -309,7 +287,7 @@ function drawArrow(from, to) {
     line.setAttribute('y2', y2Short);
     line.setAttribute('stroke', '#3b82f6');
     line.setAttribute('stroke-width', '4');
-    line.setAttribute('stroke-opacity', ".5")
+    line.setAttribute('stroke-opacity', ".5");
     line.setAttribute('marker-end', 'url(#arrowhead)');
 
     // Create arrowhead marker
@@ -428,20 +406,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stop demo animation
             clearInterval(demoInterval);
 
-            // Generate analysis
-            analysisData = generateMockAnalysis(uploadedPGN);
+            try {
+                // Call backend instead of mock
+                analysisData = await analyzeGame(uploadedPGN);
 
-            if (!analysisData) {
-                alert('Error analyzing game - no moves found');
-                return;
+                if (!analysisData) {
+                    alert('Error analyzing game - no data returned');
+                    return;
+                }
+
+                // Switch views
+                document.getElementById('state-upload').classList.add('hidden');
+                document.getElementById('state-analysis').classList.remove('hidden');
+
+                // Initialize analysis board
+                initAnalysisBoard();
+            } catch (error) {
+                alert('Error analyzing game. Please try again.');
+                console.error(error);
             }
-
-            // Switch views
-            document.getElementById('state-upload').classList.add('hidden');
-            document.getElementById('state-analysis').classList.remove('hidden');
-
-            // Initialize analysis board
-            initAnalysisBoard();
         });
     }
 
