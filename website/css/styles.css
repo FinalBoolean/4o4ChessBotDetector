@@ -1,6 +1,5 @@
 @import "tailwindcss";
-
-/* Keep original proportions but make them responsive */
+/* Keep proportions but make them responsive */
 .container {
   max-width: 1600px;
 }
@@ -12,7 +11,6 @@
   aspect-ratio: 1 / 1;
 }
 
-/* Maintain original inline widths but allow scaling */
 #demo-board {
   max-width: 750px;
 }
@@ -54,10 +52,6 @@
 #move-list {
   max-height: 400px;
   overflow-y: auto;
-}
-
-#upload-zone {
-  background: rgba(255, 192, 203, 0.3);
 }
 
 /* Prevent body overflow on smaller screens */
@@ -249,4 +243,8 @@ body {
   #analysis-board {
     max-width: 480px;
   }
+  #demo-board {
+  border-radius: 12px;
+  overflow: hidden;
+}
 }
