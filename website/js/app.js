@@ -35,15 +35,24 @@ function initDemoBoard() {
 }
 
 async function fetchDemoGame() {
-    // TODO: Replace with actual endpoint
-    // const response = await fetch('/api/demo-game');
-    // const pgn = await response.text();
-    
-    // Mock PGN for demo
-    const mockPGN = '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O';
-    
-    demoGame.load_pgn(mockPGN);
-    playDemoGame();
+    try {
+        const response = await fetch('/api/demo-game');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json(); // Expecting JSON
+        const pgn = data.pgn;
+        demoGame.load_pgn(pgn);
+        playDemoGame();
+    } catch (error) {
+        console.error('Error fetching demo game:', error);
+        
+        // Fallback to mock PGN if endpoint fails
+        const mockPGN = '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O';
+        demoGame.load_pgn(mockPGN);
+        playDemoGame();
+    }
 }
 
 function playDemoGame() {
