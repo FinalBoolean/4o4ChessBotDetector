@@ -81,7 +81,7 @@ function playDemoGame() {
 
 async function analyzeGame(pgn) {
     try {
-        const response = await fetch('http://localhost:5000/analyze', {
+        const response = await fetch('http://localhost:6767/infer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
