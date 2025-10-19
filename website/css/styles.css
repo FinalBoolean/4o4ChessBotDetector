@@ -8,8 +8,8 @@
 }
 
 .move-item.active {
-    ring: 2px;
-    ring-color: #3b82f6;
+    outline: 2px;
+    outline-color: #3b82f6;
 }
 
 #board-container {
