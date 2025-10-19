@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@chrisoakman/chessboardjs": "^1.0.0",
+    "@tailwindcss/vite": "^4.1.14",
     "chess.js": "^0.13.4",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

@@ -14,7 +14,6 @@ app.use(express.json({ limit: "2mb" }));      // parse JSON bodies
 // Health check
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
-// POST /analyze — accepts { pgn: string } and returns analysis
 app.post("/analyze", async (req, res) => {
   try {
     const { pgn } = req.body || {};
@@ -22,18 +21,25 @@ app.post("/analyze", async (req, res) => {
       return res.status(400).json({ error: "Missing or invalid 'pgn' string" });
     }
 
-    // TODO: Replace with your real analysis (engine/ML/etc.)
-    // For now, stub a deterministic response shape your UI can consume.
-    const result = {
-      meta: { receivedMoves: countMovesFromPGN(pgn) },
-      summary: {
-        suspicious: false,
-        botProbability: 0.18
-      },
-      perMove: [] // e.g., [{ ply: 1, cpLoss: 23, best: "e4", played: "e4" }, ...]
-    };
+    const moveCount = countMovesFromPGN(pgn);
+    const whiteMoveCount = Math.ceil(moveCount / 2);
+    const blackMoveCount = Math.floor(moveCount / 2);
 
-    return res.json(result);
+    const whiteMoves = Array.from({ length: whiteMoveCount }, () => ({
+      prob: Math.random() * 100
+    }));
+    
+    const blackMoves = Array.from({ length: blackMoveCount }, () => ({
+      prob: Math.random() * 100
+    }));
+
+    const whiteScore = whiteMoves.reduce((sum, m) => sum + m.prob, 0) / whiteMoveCount;
+    const blackScore = blackMoves.reduce((sum, m) => sum + m.prob, 0) / blackMoveCount;
+
+    return res.json([
+      { score: whiteScore, moves: whiteMoves },
+      { score: blackScore, moves: blackMoves }
+    ]);
   } catch (err) {
     console.error("Analyze error:", err);
     return res.status(500).json({ error: "Internal error" });
