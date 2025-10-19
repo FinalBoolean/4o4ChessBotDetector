@@ -1,4 +1,6 @@
 // Global state
+import { Chess } from 'chess.js'
+
 let demoBoard, analysisBoard;
 let demoGame, analysisGame;
 let demoInterval;
@@ -68,8 +70,21 @@ function playDemoGame() {
 
 function generateMockAnalysis(pgn) {
     const game = new Chess();
-    game.load_pgn(pgn);
+    try {
+        const loadResult = game.load_pgn(pgn);
+        if (!loadResult) {
+            return null;
+        }
+    } catch (error) {
+        console.error('Error loading PGN:', error);
+        return null;
+    }
+    
     const moves = game.history();
+    
+    if (moves.length === 0) {
+        return null;
+    }
     
     // Generate random probabilities for demo
     const whiteMoves = [];
@@ -86,11 +101,11 @@ function generateMockAnalysis(pgn) {
     
     return {
         white: {
-            overallProbability: whiteMoves.reduce((a, b) => a + b, 0) / whiteMoves.length,
+            overallProbability: whiteMoves.length > 0 ? whiteMoves.reduce((a, b) => a + b, 0) / whiteMoves.length : 0,
             moveProbs: whiteMoves
         },
         black: {
-            overallProbability: blackMoves.reduce((a, b) => a + b, 0) / blackMoves.length,
+            overallProbability: blackMoves.length > 0 ? blackMoves.reduce((a, b) => a + b, 0) / blackMoves.length : 0,
             moveProbs: blackMoves
         }
     };
@@ -104,12 +119,22 @@ function initAnalysisBoard() {
     });
     
     analysisGame = new Chess();
-    analysisGame.load_pgn(uploadedPGN);
+    
+    try {
+        const loadResult = analysisGame.load_pgn(uploadedPGN);
+        if (!loadResult) {
+            alert('Error loading PGN for analysis');
+            return;
+        }
+    } catch (error) {
+        alert('Error loading PGN: ' + error.message);
+        return;
+    }
     
     // Build move history
     moveHistory = [];
     const tempGame = new Chess();
-    tempGame.load_pgn(uploadedPGN);
+    tempGame.load_pgn(uploadedPGN); 
     const moves = tempGame.history({ verbose: true });
     tempGame.reset();
     
@@ -159,13 +184,13 @@ function populateMoveList() {
         
         moveDiv.innerHTML = `
             <span class="text-gray-600 font-semibold w-8">${moveNum}.</span>
-            <span class="flex-1 px-3 py-2 rounded move-item" 
+            <span class="flex-1 px-3 py-2 rounded move-item cursor-pointer" 
                   style="background-color: ${getColorForProb(whiteProb)}; color: white;"
                   data-move-index="${i + 1}">
                 ${whiteMove}
             </span>
             ${blackMove ? `
-                <span class="flex-1 px-3 py-2 rounded move-item" 
+                <span class="flex-1 px-3 py-2 rounded move-item cursor-pointer" 
                       style="background-color: ${getColorForProb(blackProb)}; color: white;"
                       data-move-index="${i + 2}">
                     ${blackMove}
@@ -193,10 +218,13 @@ function updatePosition() {
     analysisBoard.position(position.fen);
     
     // Clear previous arrow
-    document.getElementById('arrow-overlay').innerHTML = '';
+    const arrowOverlay = document.getElementById('arrow-overlay');
+    if (arrowOverlay) {
+        arrowOverlay.innerHTML = '';
+    }
     
     // Draw arrow if not initial position
-    if (position.move) {
+    if (position.move && arrowOverlay) {
         drawArrow(position.from, position.to);
     }
     
@@ -219,9 +247,9 @@ function updatePosition() {
     
     // Highlight active move in list
     document.querySelectorAll('.move-item').forEach(item => {
-        item.classList.remove('active');
+        item.classList.remove('ring-4', 'ring-blue-300');
         if (parseInt(item.dataset.moveIndex) === currentMoveIndex) {
-            item.classList.add('active');
+            item.classList.add('ring-4', 'ring-blue-300');
         }
     });
 }
@@ -280,58 +308,143 @@ function drawArrow(from, to) {
     svg.appendChild(line);
 }
 
-// Navigation controls (keep these outside window.onload)
+// Navigation controls
 document.addEventListener('DOMContentLoaded', () => {
     initDemoBoard();
     
     // File upload handling
-    document.getElementById('upload-zone').addEventListener('click', () => {
-        document.getElementById('file-input').click();
-    });
+    const uploadZone = document.getElementById('upload-zone');
+    if (uploadZone) {
+        uploadZone.addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+    }
 
-    document.getElementById('file-input').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            
+            if (!file) {
+                alert('Please select a PGN file');
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = (event) => {
-                uploadedPGN = event.target.result;
-                document.getElementById('file-name').textContent = file.name;
-                document.getElementById('file-name').classList.remove('hidden');
-                
-                const analyzeBtn = document.getElementById('analyze-btn');
-                analyzeBtn.disabled = false;
-                analyzeBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                analyzeBtn.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-600', 'cursor-pointer');
+                try {
+                    console.log(event.target.result);
+                    
+                    // Validate PGN
+                    const testGame = new Chess();
+                    const loadResult = testGame.load_pgn(event.target.result);
+                    
+                    if (!loadResult) {
+                        alert('Invalid PGN format');
+                        uploadedPGN = null;
+                        // Disable analyze button
+                        const analyzeBtn = document.getElementById('analyze-btn');
+                        analyzeBtn.disabled = true;
+                        analyzeBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                        analyzeBtn.classList.remove('bg-blue-500', 'text-white', 'hover:bg-blue-600', 'cursor-pointer');
+                        return;
+                    }
+                    
+                    // If we get here, PGN is valid
+                    uploadedPGN = event.target.result;
+                    
+                    // Update UI
+                    document.getElementById('file-name').textContent = file.name;
+                    document.getElementById('file-name').classList.remove('hidden');
+                    
+                    const analyzeBtn = document.getElementById('analyze-btn');
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                    analyzeBtn.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-600', 'cursor-pointer');
+                    
+                    console.log('PGN loaded successfully');
+                } catch (error) {
+                    console.log(error);
+                    alert('Invalid PGN format');
+                    uploadedPGN = null;
+                    // Disable analyze button
+                    const analyzeBtn = document.getElementById('analyze-btn');
+                    analyzeBtn.disabled = true;
+                    analyzeBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                    analyzeBtn.classList.remove('bg-blue-500', 'text-white', 'hover:bg-blue-600', 'cursor-pointer');
+                }
             };
             reader.readAsText(file);
-        }
-    });
+        });
+    }
 
-    document.getElementById('analyze-btn').addEventListener('click', async () => {
-        if (!uploadedPGN) return;
-        clearInterval(demoInterval);
-        analysisData = generateMockAnalysis(uploadedPGN);
-        document.getElementById('state-upload').classList.add('hidden');
-        document.getElementById('state-analysis').classList.remove('hidden');
-        initAnalysisBoard();
-    });
+    const analyzeBtn = document.getElementById('analyze-btn');
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', async () => {
+            if (!uploadedPGN) {
+                alert('Please upload a valid PGN file first');
+                return;
+            }
+            
+            // Validate PGN one more time before analysis
+            try {
+                const testGame = new Chess();
+                const loadResult = testGame.load_pgn(uploadedPGN);
+                if (!loadResult) {
+                    alert('Invalid PGN format. Please upload a valid PGN file.');
+                    return;
+                }
+            } catch (error) {
+                alert('Invalid PGN format. Please upload a valid PGN file.');
+                console.error(error);
+                return;
+            }
+            
+            // Stop demo animation
+            clearInterval(demoInterval);
+            
+            // Generate analysis
+            analysisData = generateMockAnalysis(uploadedPGN);
+            
+            if (!analysisData) {
+                alert('Error analyzing game - no moves found');
+                return;
+            }
+            
+            // Switch views
+            document.getElementById('state-upload').classList.add('hidden');
+            document.getElementById('state-analysis').classList.remove('hidden');
+            
+            // Initialize analysis board
+            initAnalysisBoard();
+        });
+    }
 
-    document.getElementById('prev-btn').addEventListener('click', () => {
-        if (currentMoveIndex > 0) {
-            currentMoveIndex--;
+    const prevBtn = document.getElementById('prev-btn');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentMoveIndex > 0) {
+                currentMoveIndex--;
+                updatePosition();
+            }
+        });
+    }
+
+    const nextBtn = document.getElementById('next-btn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentMoveIndex < moveHistory.length - 1) {
+                currentMoveIndex++;
+                updatePosition();
+            }
+        });
+    }
+
+    const resetBtn = document.getElementById('reset-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            currentMoveIndex = 0;
             updatePosition();
-        }
-    });
-
-    document.getElementById('next-btn').addEventListener('click', () => {
-        if (currentMoveIndex < moveHistory.length - 1) {
-            currentMoveIndex++;
-            updatePosition();
-        }
-    });
-
-    document.getElementById('reset-btn').addEventListener('click', () => {
-        currentMoveIndex = 0;
-        updatePosition();
-    });
+        });
+    }
 });
