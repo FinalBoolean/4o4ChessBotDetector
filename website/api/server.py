@@ -115,7 +115,19 @@ def apply_beta(tok, sw, sb, Wmask, Bmask, beta: float):
 
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
+
+CORS(
+    app,
+    resources={r"/infer": {"origins": [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]}},
+    supports_credentials=False,
+    methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    expose_headers=["Content-Length"],
+    max_age=86400,
+)
 
 CKPT_PATH = os.environ.get("CKPT", "cheat_hier_best.pt")
 BETA_SIDE = float(os.environ.get("BETA_SIDE", "0.7"))
