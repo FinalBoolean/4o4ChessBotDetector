@@ -1,3 +1,4 @@
+import { Chess } from 'chess.js'
 // Global state
 let demoBoard, analysisBoard;
 let demoGame, analysisGame;

@@ -1,21 +1,31 @@
 @import "tailwindcss";
-html {
-  transform: scale(0.9);          /* 90% size */
-  transform-origin: top center;
+
+/* Keep original proportions but make them responsive */
+.container {
+  max-width: 1600px;
 }
 
-.move-item {
-    cursor: pointer;
-    transition: background-color 0.2s;
+/* Board sizing - responsive while maintaining aspect ratio */
+#demo-board,
+#analysis-board {
+  width: 100% !important;
+  aspect-ratio: 1 / 1;
 }
 
-.move-item:hover {
-    opacity: 0.8;
+/* Maintain original inline widths but allow scaling */
+#demo-board {
+  max-width: 750px;
 }
 
-.move-item.active {
-    outline: 2px;
-    outline-color: #3b82f6;
+#analysis-board {
+  max-width: 700px;
+}
+
+#board-container {
+  position: relative;
+  width: 700px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 #arrow-overlay {
@@ -25,17 +35,218 @@ html {
   height: 100%;
   pointer-events: none;
 }
-#upload-zone { background: rgba(255, 0, 0, 0.2); }
-#move-list{
-    max-height: 400px;
-}
-#board-container {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  max-width: 700px;
+
+/* Move list styling */
+.move-item {
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-    body {
-      overflow: hidden;
-    }
+.move-item:hover {
+  opacity: 0.8;
+}
+
+.move-item.active {
+  outline: 2px;
+  outline-color: #3b82f6;
+}
+
+#move-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#upload-zone {
+  background: rgba(255, 192, 203, 0.3);
+}
+
+/* Prevent body overflow on smaller screens */
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1920px) and (max-height: 1080px) {
+  #board-container {
+    width: 650px;
+  }
+  
+  #demo-board {
+    max-width: 700px;
+  }
+  
+  #analysis-board {
+    max-width: 650px;
+  }
+}
+
+@media (max-width: 1680px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  #board-container {
+    width: 600px;
+  }
+  
+  #demo-board {
+    max-width: 650px;
+  }
+  
+  #analysis-board {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 1440px) {
+  .container {
+    max-width: 1200px;
+  }
+  
+  #board-container {
+    width: 550px;
+  }
+  
+  #demo-board {
+    max-width: 600px;
+  }
+  
+  #analysis-board {
+    max-width: 550px;
+  }
+}
+
+@media (max-width: 1366px) {
+  .container {
+    max-width: 1100px;
+  }
+  
+  #board-container {
+    width: 500px;
+  }
+  
+  #demo-board {
+    max-width: 550px;
+  }
+  
+  #analysis-board {
+    max-width: 500px;
+  }
+  
+  #move-list {
+    max-height: 350px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .container {
+    max-width: 1024px;
+  }
+  
+  #board-container {
+    width: 480px;
+  }
+  
+  #demo-board {
+    max-width: 520px;
+  }
+  
+  #analysis-board {
+    max-width: 480px;
+  }
+}
+
+/* Height-based adjustments */
+@media (max-height: 900px) {
+  #board-container {
+    width: 550px;
+  }
+  
+  #demo-board {
+    max-width: 600px;
+  }
+  
+  #analysis-board {
+    max-width: 550px;
+  }
+  
+  .container {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+
+@media (max-height: 800px) {
+  #board-container {
+    width: 500px;
+  }
+  
+  #demo-board {
+    max-width: 550px;
+  }
+  
+  #analysis-board {
+    max-width: 500px;
+  }
+  
+  #upload-zone {
+    padding: 2rem !important;
+  }
+  
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1.125rem !important;
+  }
+}
+
+@media (max-height: 768px) {
+  #board-container {
+    width: 450px;
+  }
+  
+  #demo-board {
+    max-width: 500px;
+  }
+  
+  #analysis-board {
+    max-width: 450px;
+  }
+  
+  .container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* Combined breakpoints for common resolutions */
+@media (max-width: 1366px) and (max-height: 768px) {
+  #board-container {
+    width: 440px;
+  }
+  
+  #demo-board {
+    max-width: 480px;
+  }
+  
+  #analysis-board {
+    max-width: 440px;
+  }
+}
+
+@media (max-width: 1280px) and (max-height: 1024px) {
+  #board-container {
+    width: 480px;
+  }
+  
+  #demo-board {
+    max-width: 520px;
+  }
+  
+  #analysis-board {
+    max-width: 480px;
+  }
+}
