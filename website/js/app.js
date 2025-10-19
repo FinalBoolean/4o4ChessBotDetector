@@ -30,11 +30,12 @@ function initDemoBoard() {
         pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
     });
     demoGame = new Chess();
-    
+
     fetchDemoGame();
 }
 
 async function fetchDemoGame() {
+<<<<<<< HEAD
     try {
         const response = await fetch('/api/demo-game');
         
@@ -53,17 +54,28 @@ async function fetchDemoGame() {
         demoGame.load_pgn(mockPGN);
         playDemoGame();
     }
+=======
+    // TODO: Replace with actual endpoint
+    // const response = await fetch('/api/demo-game');
+    // const pgn = await response.text();
+
+    // Mock PGN for demo
+    const mockPGN = '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O';
+
+    demoGame.load_pgn(mockPGN);
+    playDemoGame();
+>>>>>>> 1fe61651a3adc582cd237d12d0ea90139ccfeb02
 }
 
 function playDemoGame() {
     demoGame.reset();
     demoBoard.position('start');
-    
+
     const moves = demoGame.history({ verbose: true });
     demoGame.reset();
-    
+
     let moveIndex = 0;
-    
+
     demoInterval = setInterval(() => {
         if (moveIndex < moves.length) {
             demoGame.move(moves[moveIndex]);
@@ -89,17 +101,17 @@ function generateMockAnalysis(pgn) {
         console.error('Error loading PGN:', error);
         return null;
     }
-    
+
     const moves = game.history();
-    
+
     if (moves.length === 0) {
         return null;
     }
-    
+
     // Generate random probabilities for demo
     const whiteMoves = [];
     const blackMoves = [];
-    
+
     moves.forEach((move, i) => {
         const prob = Math.random();
         if (i % 2 === 0) {
@@ -108,7 +120,7 @@ function generateMockAnalysis(pgn) {
             blackMoves.push(prob);
         }
     });
-    
+
     return {
         white: {
             overallProbability: whiteMoves.length > 0 ? whiteMoves.reduce((a, b) => a + b, 0) / whiteMoves.length : 0,
@@ -127,9 +139,9 @@ function initAnalysisBoard() {
         draggable: false,
         pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
     });
-    
+
     analysisGame = new Chess();
-    
+
     try {
         const loadResult = analysisGame.load_pgn(uploadedPGN);
         if (!loadResult) {
@@ -140,34 +152,34 @@ function initAnalysisBoard() {
         alert('Error loading PGN: ' + error.message);
         return;
     }
-    
+
     // Build move history
     moveHistory = [];
     const tempGame = new Chess();
-    tempGame.load_pgn(uploadedPGN); 
+    tempGame.load_pgn(uploadedPGN);
     const moves = tempGame.history({ verbose: true });
     tempGame.reset();
-    
+
     moveHistory.push({ fen: tempGame.fen(), move: null });
     moves.forEach(move => {
         tempGame.move(move);
-        moveHistory.push({ 
-            fen: tempGame.fen(), 
+        moveHistory.push({
+            fen: tempGame.fen(),
             move: move,
             from: move.from,
             to: move.to
         });
     });
-    
+
     // Display overall probabilities
-    document.getElementById('white-prob').textContent = 
+    document.getElementById('white-prob').textContent =
         (analysisData.white.overallProbability * 100).toFixed(1) + '%';
-    document.getElementById('black-prob').textContent = 
+    document.getElementById('black-prob').textContent =
         (analysisData.black.overallProbability * 100).toFixed(1) + '%';
-    
+
     // Populate move list
     populateMoveList();
-    
+
     // Set initial position
     currentMoveIndex = 0;
     updatePosition();
@@ -176,22 +188,22 @@ function initAnalysisBoard() {
 function populateMoveList() {
     const moveListEl = document.getElementById('move-list');
     moveListEl.innerHTML = '';
-    
+
     const game = new Chess();
     game.load_pgn(uploadedPGN);
     const moves = game.history();
-    
+
     for (let i = 0; i < moves.length; i += 2) {
         const moveNum = Math.floor(i / 2) + 1;
         const whiteMove = moves[i];
         const blackMove = moves[i + 1] || '';
-        
+
         const whiteProb = analysisData.white.moveProbs[Math.floor(i / 2)];
         const blackProb = i + 1 < moves.length ? analysisData.black.moveProbs[Math.floor(i / 2)] : null;
-        
+
         const moveDiv = document.createElement('div');
         moveDiv.className = 'flex gap-2 items-center';
-        
+
         moveDiv.innerHTML = `
             <span class="text-gray-600 font-semibold w-8">${moveNum}.</span>
             <span class="flex-1 px-3 py-2 rounded move-item cursor-pointer" 
@@ -207,10 +219,10 @@ function populateMoveList() {
                 </span>
             ` : '<span class="flex-1"></span>'}
         `;
-        
+
         moveListEl.appendChild(moveDiv);
     }
-    
+
     // Add click handlers
     document.querySelectorAll('.move-item').forEach(item => {
         item.addEventListener('click', (e) => {
@@ -223,21 +235,21 @@ function populateMoveList() {
 
 function updatePosition() {
     if (currentMoveIndex < 0 || currentMoveIndex >= moveHistory.length) return;
-    
+
     const position = moveHistory[currentMoveIndex];
     analysisBoard.position(position.fen);
-    
+
     // Clear previous arrow
     const arrowOverlay = document.getElementById('arrow-overlay');
     if (arrowOverlay) {
         arrowOverlay.innerHTML = '';
     }
-    
+
     // Draw arrow if not initial position
     if (position.move && arrowOverlay) {
         drawArrow(position.from, position.to);
     }
-    
+
     // Update current move info
     if (currentMoveIndex === 0) {
         document.getElementById('current-player').textContent = '-';
@@ -246,15 +258,15 @@ function updatePosition() {
     } else {
         const isWhiteMove = (currentMoveIndex - 1) % 2 === 0;
         const moveIndex = Math.floor((currentMoveIndex - 1) / 2);
-        const prob = isWhiteMove ? 
-            analysisData.white.moveProbs[moveIndex] : 
+        const prob = isWhiteMove ?
+            analysisData.white.moveProbs[moveIndex] :
             analysisData.black.moveProbs[moveIndex];
-        
+
         document.getElementById('current-player').textContent = isWhiteMove ? 'White' : 'Black';
         document.getElementById('current-prob').textContent = (prob * 100).toFixed(1) + '%';
         document.getElementById('current-prob').style.color = getColorForProb(prob);
     }
-    
+
     // Highlight active move in list
     document.querySelectorAll('.move-item').forEach(item => {
         item.classList.remove('ring-4', 'ring-blue-300');
@@ -270,24 +282,25 @@ function drawArrow(from, to) {
     const fromRank = 8 - parseInt(from[1]);
     const toFile = files.indexOf(to[0]);
     const toRank = 8 - parseInt(to[1]);
-    
-    const squareSize = 500 / 8;
+
+    const squareSize = 700 / 8;
     const x1 = fromFile * squareSize + squareSize / 2;
     const y1 = fromRank * squareSize + squareSize / 2;
     const x2 = toFile * squareSize + squareSize / 2;
     const y2 = toRank * squareSize + squareSize / 2;
-    
+
     const svg = document.getElementById('arrow-overlay');
-    
+
     // Calculate arrow angle
     const angle = Math.atan2(y2 - y1, x2 - x1);
     const arrowLength = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-    
+
     // Shorten arrow to not cover destination square
-    const shortenBy = squareSize * 0.3;
-    const x2Short = x2 - shortenBy * Math.cos(angle);
-    const y2Short = y2 - shortenBy * Math.sin(angle);
-    
+    const arrowHeadSize = 10;  // The markerWidth value
+    const shortenBy = squareSize * 0.5 + (arrowHeadSize/2);  // Adjust this value as needed
+    const x2Short = x2 - (shortenBy + arrowHeadSize) * Math.cos(angle);
+    const y2Short = y2 - (shortenBy + arrowHeadSize) * Math.sin(angle);
+
     // Create arrow line
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', x1);
@@ -296,8 +309,9 @@ function drawArrow(from, to) {
     line.setAttribute('y2', y2Short);
     line.setAttribute('stroke', '#3b82f6');
     line.setAttribute('stroke-width', '4');
+    line.setAttribute('stroke-opacity', ".5")
     line.setAttribute('marker-end', 'url(#arrowhead)');
-    
+
     // Create arrowhead marker
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
@@ -307,11 +321,12 @@ function drawArrow(from, to) {
     marker.setAttribute('refX', '5');
     marker.setAttribute('refY', '3');
     marker.setAttribute('orient', 'auto');
-    
+
     const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     polygon.setAttribute('points', '0 0, 10 3, 0 6');
     polygon.setAttribute('fill', '#3b82f6');
-    
+    polygon.setAttribute('fill-opacity', '0.5');
+
     marker.appendChild(polygon);
     defs.appendChild(marker);
     svg.appendChild(defs);
@@ -321,7 +336,7 @@ function drawArrow(from, to) {
 // Navigation controls
 document.addEventListener('DOMContentLoaded', () => {
     initDemoBoard();
-    
+
     // File upload handling
     const uploadZone = document.getElementById('upload-zone');
     if (uploadZone) {
@@ -334,21 +349,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            
+
             if (!file) {
                 alert('Please select a PGN file');
                 return;
             }
-            
+
             const reader = new FileReader();
             reader.onload = (event) => {
                 try {
                     console.log(event.target.result);
-                    
+
                     // Validate PGN
                     const testGame = new Chess();
                     const loadResult = testGame.load_pgn(event.target.result);
-                    
+
                     if (!loadResult) {
                         alert('Invalid PGN format');
                         uploadedPGN = null;
@@ -359,19 +374,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         analyzeBtn.classList.remove('bg-blue-500', 'text-white', 'hover:bg-blue-600', 'cursor-pointer');
                         return;
                     }
-                    
+
                     // If we get here, PGN is valid
                     uploadedPGN = event.target.result;
-                    
+
                     // Update UI
                     document.getElementById('file-name').textContent = file.name;
                     document.getElementById('file-name').classList.remove('hidden');
-                    
+
                     const analyzeBtn = document.getElementById('analyze-btn');
                     analyzeBtn.disabled = false;
                     analyzeBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
                     analyzeBtn.classList.add('bg-blue-500', 'text-white', 'hover:bg-blue-600', 'cursor-pointer');
-                    
+
                     console.log('PGN loaded successfully');
                 } catch (error) {
                     console.log(error);
@@ -395,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please upload a valid PGN file first');
                 return;
             }
-            
+
             // Validate PGN one more time before analysis
             try {
                 const testGame = new Chess();
@@ -409,22 +424,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(error);
                 return;
             }
-            
+
             // Stop demo animation
             clearInterval(demoInterval);
-            
+
             // Generate analysis
             analysisData = generateMockAnalysis(uploadedPGN);
-            
+
             if (!analysisData) {
                 alert('Error analyzing game - no moves found');
                 return;
             }
-            
+
             // Switch views
             document.getElementById('state-upload').classList.add('hidden');
             document.getElementById('state-analysis').classList.remove('hidden');
-            
+
             // Initialize analysis board
             initAnalysisBoard();
         });
