@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -7,11 +6,9 @@ dotenv.config();
 
 const app = express();
 
-// Middlewares
-app.use(cors({ origin: true }));              // adjust origin in prod
-app.use(express.json({ limit: "2mb" }));      // parse JSON bodies
+app.use(cors({ origin: true }));              
+app.use(express.json({ limit: "2mb" }));      
 
-// Health check
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 app.post("/analyze", async (req, res) => {
@@ -46,9 +43,7 @@ app.post("/analyze", async (req, res) => {
   }
 });
 
-// --- helpers ---
 function countMovesFromPGN(pgn) {
-  // very rough count of move numbers like "1.", "2.", etc.; replace with a proper PGN parser later
   const matches = pgn.match(/\d+\./g);
   return matches ? matches.length : 0;
 }
