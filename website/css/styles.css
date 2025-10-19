@@ -29,3 +29,6 @@
     pointer-events: none;
 }
 #upload-zone { background: rgba(255, 0, 0, 0.2); }
+#move-list{
+    max-height: 400px;
+}
