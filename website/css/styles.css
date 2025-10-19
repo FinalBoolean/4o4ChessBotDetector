@@ -14,12 +14,6 @@
     outline-color: #3b82f6;
 }
 
-#board-container {
-    position: relative;
-    width: 500px;
-    height: 500px;
-}
-
 #arrow-overlay {
     position: absolute;
     top: 0;
@@ -28,7 +22,21 @@
     height: 100%;
     pointer-events: none;
 }
-#upload-zone { background: rgba(255, 0, 0, 0.2); }
-#move-list{
+
+#upload-zone {
+    background: rgba(255, 0, 0, 0.2);
+}
+
+#move-list {
     max-height: 400px;
+}
+
+#board-container {
+    position: relative;
+    width: 700px;
+    height: 700px;
+}
+
+body {
+    overflow: hidden;
 }
