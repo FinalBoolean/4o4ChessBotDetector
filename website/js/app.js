@@ -13,10 +13,11 @@ const THRESHOLDS = {
     high: 0.7
 };
 
+// Util to get color based on probability
 function getColorForProb(prob) {
-    if (prob < THRESHOLDS.low) return '#10b981'; // green
-    if (prob < THRESHOLDS.high) return '#f59e0b'; // yellow
-    return '#ef4444'; // red
+    if (prob < THRESHOLDS.low) return '#10b981'; // g
+    if (prob < THRESHOLDS.high) return '#f59e0b'; // y
+    return '#ef4444'; // r
 }
 
 // Initialize demo board
@@ -280,7 +281,7 @@ function drawArrow(from, to) {
     svg.appendChild(line);
 }
 
-// Navigation controls (keep these outside window.onload)
+// Navigation controls
 document.addEventListener('DOMContentLoaded', () => {
     initDemoBoard();
     
