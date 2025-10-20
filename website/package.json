@@ -9,7 +9,8 @@
   "build": "vite build",
   "preview": "vite preview",
   "server": "node server.js",
-  "start-all": "concurrently \"npm run server\" \"npm run dev\""
+  "python": "python api/server.py",
+  "start-all": "concurrently \"npm run dev\" \"npm run python\""
 },
   "keywords": [],
   "author": "",

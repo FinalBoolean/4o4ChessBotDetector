@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <header class="fixed top-4 right-4 z-50">
-  <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Login/Sign Up</button>
+  <!-- <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Login/Sign Up</button>-->
 </header>
 <body class="bg-gray-100 min-h-screen">
     <!-- State 1: Upload -->
@@ -54,7 +54,7 @@
     <div id="state-analysis" class="container mx-auto p-8 hidden">
         <div class="flex gap-8">
             <!-- Left: Chessboard with Controls -->
-            <div class="w-2/3 bg-white rounded-lg shadow-lg p-8">
+            <div class="w-2/3 bg-white rounded-lg shadow-lg p-8 relative">
                 <div class="flex justify-center mb-6">
                     <div id="board-container">
                         <div id="analysis-board" style="width: 700px"></div>
@@ -72,6 +72,9 @@
                         Next &gt;
                     </button>
                 </div>
+                <button id="back-to-upload-btn" class="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400 absolute right-6 bottom-6">
+                    Back to Upload
+                </button>
             </div>
 
             <!-- Right: Analysis Panel -->

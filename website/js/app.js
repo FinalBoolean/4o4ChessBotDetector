@@ -10,8 +10,8 @@ let moveHistory = [];
 
 // Color thresholds
 const THRESHOLDS = {
-    low: 0.4,
-    high: 0.7
+    low: 0.6,
+    high: 0.9
 };
 
 // Util to get color based on probability
@@ -289,7 +289,7 @@ function drawArrow(from, to) {
     line.setAttribute('y2', y2Short);
     line.setAttribute('stroke', '#3b82f6');
     line.setAttribute('stroke-width', '4');
-    line.setAttribute('stroke-opacity', ".5");
+   // line.setAttribute('stroke-opacity', ".5");
     line.setAttribute('marker-end', 'url(#arrowhead)');
 
     // Create arrowhead marker
@@ -305,7 +305,7 @@ function drawArrow(from, to) {
     const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     polygon.setAttribute('points', '0 0, 10 3, 0 6');
     polygon.setAttribute('fill', '#3b82f6');
-    polygon.setAttribute('fill-opacity', '0.5');
+    // polygon.setAttribute('fill-opacity', '0.5');
 
     marker.appendChild(polygon);
     defs.appendChild(marker);
@@ -455,6 +455,14 @@ document.addEventListener('DOMContentLoaded', () => {
         resetBtn.addEventListener('click', () => {
             currentMoveIndex = 0;
             updatePosition();
+        });
+    }
+
+    const backToUploadBtn = document.getElementById('back-to-upload-btn');
+    if (backToUploadBtn) {
+        backToUploadBtn.addEventListener('click', () => {
+            // Minimal change: simply reload the page to return to state one
+            window.location.reload();
         });
     }
 });
